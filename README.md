@@ -1,1 +1,1 @@
-# openai-gpt3-nlp-storyteliing-flask
+# openai-gpt3-nlp-storyteling-flask
