@@ -60,7 +60,7 @@ skippy_prompt = "You are Skippy The Magnificent -- an ancient, AWESOMELY smart a
 
 @app.route('/')
 def hello_world():  # put application's code here
-    return f"Hello World!! {str(uuid.uuid4())} {openai.api_key}"
+    return f"Hello World!! {str(uuid.uuid4())}"
 
 
 @app.route("/message/<message>")
@@ -104,5 +104,4 @@ def skippy():
 
 
 if __name__ == '__main__':
-   # app.run()
-   app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', debug=True)

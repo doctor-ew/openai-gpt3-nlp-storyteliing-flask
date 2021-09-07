@@ -10,12 +10,16 @@ ENV FLASK_ENV="docker"
 ENV FLASK_APP=app.py
 
 # By default, listen on port 5000
-EXPOSE 5000/tcp
+EXPOSE 5000
+EXPOSE 8000
+EXPOSE 80
 
 #FROM base as debug
 ENV PYTHONDONTWRITEBYTECODE 1
 # Turns off buffering for easier container logging
 ENV PYTHONUNBUFFERED 1
+
+RUN apt-get update; apt-get install -y curl
 
 RUN pip install debugpy
 
@@ -32,5 +36,6 @@ RUN pip install -r requirements.txt
 # Run the application:
 COPY app.py .
 CMD ["python", "app.py"]
+CMD ["flask", "run", "-h", "0.0.0.0", "-p", "5000"]
 
 
