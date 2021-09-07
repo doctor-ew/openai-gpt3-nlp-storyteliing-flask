@@ -18,6 +18,7 @@ ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
 RUN pip install debugpy
+
 # Set the working directory in the container
 WORKDIR /app
 
