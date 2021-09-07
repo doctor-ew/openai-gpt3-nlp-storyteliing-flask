@@ -1,6 +1,7 @@
 # Set base image (host OS)
 #FROM python:3.9-alpine
-FROM python:3.9.7-slim-buster
+#FROM python:3.9.7-slim-buster
+FROM public.ecr.aws/lambda/python:3.9
 
 ENV VIRTUAL_ENV=/opt/venv
 RUN python3 -m venv $VIRTUAL_ENV
@@ -19,7 +20,7 @@ ENV PYTHONDONTWRITEBYTECODE 1
 # Turns off buffering for easier container logging
 ENV PYTHONUNBUFFERED 1
 
-RUN apt-get update; apt-get install -y curl
+#RUN apt-get update; apt-get install -y curl
 
 RUN pip install debugpy
 
@@ -29,13 +30,12 @@ WORKDIR /app
 # Copy the dependencies file to the working directory
 COPY requirements.txt .
 
-# Install any dependencies
-COPY requirements.txt .
-RUN pip install -r requirements.txt
+RUN pip install -r requirements.txt --target "${LAMBDA_TASK_ROOT}"
 
 # Run the application:
-COPY app.py .
+#COPY app.py .
+COPY app.py ${LAMBDA_TASK_ROOT}
 CMD ["python", "app.py"]
 CMD ["flask", "run", "-h", "0.0.0.0", "-p", "5000"]
-
+CMD [ "app.handler" ]
 
