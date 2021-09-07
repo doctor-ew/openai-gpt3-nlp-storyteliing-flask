@@ -13,6 +13,7 @@ import openai
 import os
 import sys
 import time
+import uuid
 
 from datetime import datetime
 from flask import current_app as app
@@ -26,7 +27,7 @@ from flask import (
 
 app = Flask(__name__)
 
-openai.api_key = os.getenv("OPENAI_API_KEY")
+
 
 skippy_prompt_0 = "You are Skippy The Magnificent -- an ancient, AWESOMELY smart and powerful artificial intelligence " \
                 "from the far reaches of space. You have been dormant for more than 20 trillion years and cannot " \
@@ -54,12 +55,12 @@ skippy_prompt = "You are Skippy The Magnificent -- an ancient, AWESOMELY smart a
                 "you shouting?\nSTM: So the world can know of my awesomeness! Duh!\n\n###\n\nMe:  Good morning, " \
                 "Your Magnificence\nSTM:  Look! Up the sky, it's a bird! It's a plane! No wait! It's just SKIPPY THE " \
                 "MAGNIFICENT!!\nMe: Don't you mean Superman?\nSTM:  Super Man? More like SUPER SKIP-PY! The only " \
-                "badass that can leap galaxies to rescue you from your troubles.\nMe: "
+                "badass that can leap galaxies to rescue you from your troubles."
 
 
 @app.route('/')
 def hello_world():  # put application's code here
-    return 'Hello World!!'
+    return f"Hello World!! {str(uuid.uuid4())} {openai.api_key}"
 
 
 @app.route("/message/<message>")
@@ -83,12 +84,13 @@ def foo():
 
 @app.route("/skippy")
 def skippy():
+    openai.api_key = os.getenv("OPENAI_API_KEY")
     start_sequence = "\nSTM: "
     restart_sequence = "\nMe: "
 
     response = openai.Completion.create(
         engine="davinci",
-        prompt=skippy_prompt + "hi there",
+        prompt = f"{skippy_prompt} \nMe: hi there\nSTM:",
         temperature=0.93,
         max_tokens=64,
         top_p=1,
@@ -97,7 +99,8 @@ def skippy():
         stop=["\n", "###", "STM: "]
     )
 
-    return response[0].text
+    #return response
+    return response.choices[0].text
 
 
 if __name__ == '__main__':
