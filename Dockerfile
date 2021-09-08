@@ -1,7 +1,13 @@
 # Set base image (host OS)
 #FROM python:3.9-alpine
 #FROM python:3.9.7-slim-buster
-FROM public.ecr.aws/lambda/python:3.9
+#FROM public.ecr.aws/lambda/python:3.9
+
+#set a base image that includes Lambda Runtime API:
+# Source: https://hub.docker.com/r/amazon/aws-lambda-python
+FROM amazon/aws-lambda-python:3.9
+# optional: ensure that pip is up to date
+RUN /var/lang/bin/python3.9 -m pip install --upgrade pip
 
 ENV VIRTUAL_ENV=/opt/venv
 RUN python3 -m venv $VIRTUAL_ENV
@@ -34,8 +40,10 @@ RUN pip install -r requirements.txt --target "${LAMBDA_TASK_ROOT}"
 
 # Run the application:
 #COPY app.py .
+#COPY src/ .
+COPY .env ${LAMBDA_TASK_ROOT}
 COPY app.py ${LAMBDA_TASK_ROOT}
-CMD ["python", "app.py"]
-CMD ["flask", "run", "-h", "0.0.0.0", "-p", "5000"]
+#CMD ["python", "app.py"]
+#CMD ["flask", "run", "-h", "0.0.0.0", "-p", "5000"]
 CMD [ "app.handler" ]
 

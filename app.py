@@ -8,6 +8,8 @@ __version__ = "0.0.0"
 __license__ = "GPL-3.0"
 __github__ = "https://github.com/doctor-ew/openai-gpt3-nlp-storytelling-flask"
 
+import awsgi
+import boto3
 import logging
 import openai
 import os
@@ -16,6 +18,9 @@ import time
 import uuid
 
 from datetime import datetime
+from dotenv import load_dotenv, find_dotenv, dotenv_values
+
+from flask_cors import CORS, cross_origin
 from flask import current_app as app
 from flask import (
     Flask,
@@ -24,6 +29,12 @@ from flask import (
     request,
     session,
 )
+
+load_dotenv(find_dotenv())
+
+
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
 
 
 # app = Flask(__name__)
@@ -42,7 +53,9 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 def start_app(start_app: START_APP) -> Flask:
     app: Flask = Flask(__name__)
     CORS(app)
-    openai_api_key: Text = get_secret(Get_SSM_API_KEY)
+    #openai_api_key: Text = get_secret(Get_SSM_API_KEY)
+    openai_api_key: Text = os.getenv("OPENAI_API_KEY")
+
     # s3 = FlaskS3()
 
     # app.config[" FLASKS3_BUCKET_NAME"]: Text = "alexa-story-zoo-dev-static-files"
@@ -131,7 +144,16 @@ def skippy():
 #    return 'Hello from AWS Lambda using Python' + sys.version + '!'
 
 def lambda_handler(event, context):
-    #return awsgi.response(app, event, context)
+    # return awsgi.response(app, event, context)
     return 'Hello from AWS Lambda using Python' + sys.version + '!'
+
+
 # if __name__ == '__main__':
 #    app.run(host='0.0.0.0', debug=True)
+
+def handler(event, context):
+    config = dotenv_values(".env")
+    logger.info(f'Event: {event}')
+    result = f"Hello from AWS Lambda using Python {sys.version}! Skippy says: '{skippy()}'"
+    logger.info(f'RESULT: {result}')
+    return result
